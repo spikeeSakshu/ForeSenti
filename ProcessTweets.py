@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import get_twitter_data
-#import get_yahoo_data
 import re
 import tweepy
 import csv
@@ -16,8 +15,9 @@ from sklearn.naive_bayes import BernoulliNB
 import NaiveBayes
 from sklearn.metrics import confusion_matrix
 import datetime
+from nltk.tokenize import TweetTokenizer
 
-# Get inputGoo from user
+
 print ("Enter any keyword listed below")
 print ("Example --> AAPL GOOG YHOO MSFT GS")
 print ("-------------------------------------------------")
@@ -29,7 +29,6 @@ while not response:
     response = input("Please enter Keyword: ")
 
 
-# Get Tweets
 keyword = '$'+response
 # time = 'today'
 time = 'lastweek'
@@ -41,32 +40,13 @@ tweets = twitterData.getTwitterData(keyword, time)
 
 print ("Twitter data fetched \n")
 
-# print( "Fetch yahoo finance data for "+response+" given company keyword.... ")
-# keyword2 = response
-# quandl.ApiConfig.api_key = "nFXzo5mjYxKTdFvxmx1E"
-# # yahooData = get_yahoo_data.YahooData('2017-05-14', "2017-05-18")
-# # historical_data = yahooData.getYahooData(keyword2)
-# historical_data = quandl.get('WIKI/'+keyword2, start_date="2017-05-10", end_date="2017-05-23",returns="numpy")
-# yahoo_open_price = {}
-# yahoo_close_price = {}
-# yahoo_high_price = {}
-# yahoo_low_price = {}
-# for i in range(len(historical_data)):
-#     date = historical_data[i]['Date'].date()
-#     date=date.strftime('%Y-%m-%d')
-#     yahoo_open_price.update({date: historical_data[i]['Open']})
-#     yahoo_close_price.update({date: historical_data[i]['Close']})
-#     yahoo_high_price.update({date: historical_data[i]['High']})
-#     yahoo_low_price.update({date: historical_data[i]['Low']})
-
-# print ("Yahoo data fetched \n")
-
 print ("Collect tweet and process twitter corpus....")
 tweet_s = []
 for key,val in tweets.items():
     for value in val:
         tweet_s.append(value)   #convert tweet dictionary to list
 
+#print(tweets)
 csvFile = open('SampleTweets.csv', 'w')
 csvWriter = csv.writer(csvFile)
 
@@ -186,26 +166,42 @@ for line in afinn_file:
     if len(parts) == 2:
         afinn[parts[0]] = int(parts[1])
 
+#print(afinn)
+
 #replace non-word characters in tweet with space and split the tweet acc to words hence tokenised
 def tokenize(text):
     return re.sub('\W+', ' ', text.lower()).split()
 
 def afinn_sentiment(terms, afinn):
-
-    total = 0.
+    print(afinn)
+    print('hj',terms)
+    #print('hell',terms)
+    total = 0
     for t in terms:
+        print(t)
         if t in afinn:
-            total += afinn[t]
+            print(afinn[t])
+            total = total+afinn[t]
+    #print(total)
     return total
 
 def sentiment_analyzer():
-    tokens = [tokenize(t) for t in tweet_s]  # Tokenize all the tweets
+    print("in senti")
+    #print(tweet_s)
+    tokens=[]
+    for t in tweet_s:
+        print(t)
+        temp=TweetTokenizer(t)
+        tokens.append(temp)
+    #tokens = [TweetTokenizer(t) for t in tweet_s]  # Tokenize all the tweets
 
     afinn_total = []
+    
     for tweet in tokens:
         total = afinn_sentiment(tweet, afinn)
         afinn_total.append(total)
 
+    #print(afinn_total)
     positive_tweet_counter = []
     negative_tweet_counter = []
     neutral_tweet_counter = []
@@ -218,7 +214,7 @@ def sentiment_analyzer():
             csvWriter.writerow([bytes("|negative|",'utf-8'), tweet_s[i].encode('utf-8').split("|")[0], tweet_s[i].encode('utf-8').split("|")[1], float(afinn_total[i])])
         else:
             neutral_tweet_counter.append(afinn_total[i])
-            csvWriter.writerow([bytes("|neutral|",'utf-8'), tweet_s[i].encode('utf-8').split("|")[0], tweet_s[i].encode('utf-8').split("|")[1], float(afinn_total[i])])
+            csvWriter.writerow([bytes("|neutral|","utf-8"), tweet_s[i].encode('utf-8').split("|")[0], tweet_s[i].encode('utf-8').split("|")[1], float(afinn_total[i])])
 
 
 # Main
@@ -374,9 +370,10 @@ print ("F-Measure", svm_final_fmeasure)
 print ("\n")
 
 
+#model done 
 
 print ("Prediction completed \n")
-
+ #preparing dataset
 print ("Preparing dataset for stock prediction using yahoo finance and tweet sentiment....")
 date_tweet_details = {}
 file = open("stockpredict.txt", "w")
@@ -407,6 +404,7 @@ for dateVal in np.unique(date_split):
     day = datetime.datetime.strptime(dateVal, '%Y-%m-%d').strftime('%A')
     closing_price = 0.
     opening_price = 0.
+    '''
     if day == 'Saturday':
         update_date = dateVal.split("-")
         if len(str((int(update_date[2])-1)))==1:
@@ -426,6 +424,7 @@ for dateVal in np.unique(date_split):
     else:
         opening_price = yahoo_open_price[dateVal]
         closing_price = yahoo_close_price[dateVal]
+    '''
     """
     print dateVal
     print "Total tweets = ", date_totalCount, " Positive tweets = ", date_PosCount, " Negative tweets = ", date_NegCount
