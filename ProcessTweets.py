@@ -190,8 +190,7 @@ def sentiment_analyzer():
     #print(tweet_s)
     tokens=[]
     for t in tweet_s:
-        print(t)
-        temp=TweetTokenizer(t)
+        temp=TweetTokenizer().tokenize(t)
         tokens.append(temp)
     #tokens = [TweetTokenizer(t) for t in tweet_s]  # Tokenize all the tweets
 
