@@ -39,15 +39,15 @@ class TwitterData:
         self.weekTweets = {}
         print('poorvi1')
         if(time == 'lastweek'):
-            for i in range(0,19):
+            for i in range(0,3):
                 params = {'since': self.weekDates[i+1], 'until': self.weekDates[i]}
                 self.weekTweets[i] = self.getData(keyword, params)
+                #print(self.weekTweets[i])
             # end loop
-
             # Write data to a pickle file
-            filename = 'Data/weekTweets_'+urllib.parse.unquote(keyword.replace("+", " "))+'_'+str(int(random.random()*10000))+'.txt'
-            outfile = open(filename, 'wb')
-            pickle.dump(self.weekTweets, outfile)
+            filename = 'weekTweets_'+str(int(random.random()*10000))+'.txt'
+            outfile = open(filename, 'wb+')
+            pickle.dump(self.weekTweets[i], outfile)
             outfile.close()
         elif(time == 'today'):
             print('poorvi2')
@@ -102,16 +102,15 @@ class TwitterData:
     def getData(self, keyword, params = {}):
         maxTweets = 200
         url = 'https://api.twitter.com/1.1/search/tweets.json?'
-        data = {'q': keyword, 'lang': 'en', 'result_type': 'mixed', 'since_id': 2019,'count': maxTweets, 'include_entities': 0}
-        print('hello')
+        data = {'q': keyword, 'lang': 'en', 'result_type': 'mixed', 'since_id': 2018,'count': maxTweets, 'include_entities': 0}
+       # print('hello')
         # Add if additional params are passed
         if params:
-            for key, value in params.iteritems():
+            for key, value in params.items():
                 data[key] = value
-        print(url)
         url += urllib.parse.urlencode(data)
         #url=urllib.parse.urlencode(url)
-        print(type(url))
+        
         response = self.oauth_req(url)
         jsonData = json.loads(response)
         tweets = []
@@ -130,5 +129,5 @@ class TwitterData:
     # end
 
 # end class
-obj=TwitterData('2019-11-18')
-obj.getData('stock')
+#obj=TwitterData('2019-11-18')
+#obj.getTwitterData("hdfc","lastweek")
