@@ -7,18 +7,20 @@ Created on Mon Nov  23 22:07:02 2019
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-from keras.layers import LSTM,Dense,Dropout
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import mean_squared_error, r2_score
-import matplotlib.dates as mdates
-from sklearn import linear_model
 
 from keras.models import Sequential
 import keras.backend as K
 from keras.callbacks import EarlyStopping
 from keras.optimizers import Adam
+from keras.layers import Dense
+from keras.layers import LSTM
+
+import import_ipynb
+from GetHistoricalData import find_data
+
 
 def processing(data):
     # selecting Feature Columns
@@ -49,7 +51,8 @@ def build_model(X_train):
     
     
 def call(symbol):
-    df = pd.read_csv(symbol+".csv",na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)
+    find_data(symbol, 0)
+    df = pd.read_csv('Data'+symbol+".csv",na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)
     columns=['Prev Close','Open', 'High', 'Low', 'Close', 'Volume', 'Turnover']
     df_final= df[columns]
     test = df_final
