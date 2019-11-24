@@ -51,8 +51,9 @@ def build_model(X_train):
     
     
 def call(symbol):
+#    symbol= 'RELIANCE'
     find_data(symbol, 0)
-    df = pd.read_csv('Data'+symbol+".csv",na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)
+    df = pd.read_csv('Data/'+symbol+".csv",na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)
     columns=['Prev Close','Open', 'High', 'Low', 'Close', 'Volume', 'Turnover']
     df_final= df[columns]
     test = df_final
