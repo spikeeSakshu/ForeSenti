@@ -23,7 +23,7 @@ def prediction():
     pred_hist_LSTM, y_test, y_pred_test_LSTM, X= call(symbol)
     print(y_pred_test_LSTM)
     my_plot_div = plot([Scatter(x=X, y=y_test, name='True Value'), Scatter(x=X, y=y_pred_test_LSTM, name= 'Predicted')], output_type='div')
-    return render_template('prediction.html', title='Intel', prediction=prediction, graph=Markup(my_plot_div))
+    return render_template('prediction.html', title='Prediction', prediction=prediction, graph=Markup(my_plot_div))
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
