@@ -40,18 +40,23 @@
 
         <div class="input">
             <label for="comp">Enter Company Ticker</label>
-            <br>
-            <input type="text" id="comp">
-            <br>
-            <button type="button" class="btn btn-secondary" id="button1">Predict</button>
+            <!-- <form method = "POST">
+                <p><input type ="text" name = "ticker" /></p>
+                <a href="{{ url_for('prediction') }}" style="color: white;"}><input type="button" class="btn btn-secondary" name="Proceed" value="Predict"></a>
+
+             </form> -->
+
+             <form action="/" method="post">
+                
+                <input type="text" id="comp" name="tinker">
+                <br>
+                <input type="submit" value="Submit" class="btn btn-secondary" id="button1">
+              </form>
+            
+            <!-- <button type="button" class="btn btn-secondary" id="button1">Predict</button> -->
         </div>
 
-        <div class="row graphs">
-                <canvas id="myChart1" class="col-xl-8 col-lg-8 col-sm-8"></canvas>
-                <!-- <canvas id="myChart2" width="400" height="400"></canvas> -->
-        </div>
-        <div class="details">
-        </div>
+
 
         <div class="foot">
             <p>© Copyright 2019. All Rights Reserved. </p>

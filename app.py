@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, url_for, redirect
 from flask_restful import Api
 from flask_cors import CORS
 from plotly.offline import plot
@@ -12,23 +12,32 @@ from Predict_Sentiment import call_senti
 
 app = Flask(__name__)
 
-
-
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def home():
+    if request.method == 'POST':
+        symbol = request.form.get('tinker')
+        return redirect(url_for('prediction', symbol=symbol))
     return render_template('index.html')
 
 @app.route('/prediction')
 def prediction():
-    symbol= "RELIANCE"
-#    pred_hist_LSTM, y_test, y_pred_test_LSTM, X= call(symbol)
-#    print(y_pred_test_LSTM)
+    symbol = request.args.get('symbol', None)
+      
+    print(symbol)
+     
+
+#    symbol= "RELIANCE"
     
-    pred_senti_LSTM,y_test, y_pred_test_LSTM, X= call_senti(symbol)
-    print(pred_senti_LSTM)
+    pred_hist_LSTM, y_test, y_pred_test_LSTM, X= call(symbol)
+    print(y_pred_test_LSTM)
     
+#        pred_senti_LSTM,y_test, y_pred_test_LSTM, X= call_senti(symbol)
+#        print(pred_senti_LSTM)
+        
     my_plot_div = plot([Scatter(x=X, y=y_test, name='True Value'), Scatter(x=X, y=y_pred_test_LSTM, name= 'Predicted')], output_type='div')
+    
     return render_template('prediction.html', title='Prediction', prediction=prediction, graph=Markup(my_plot_div))
+      
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

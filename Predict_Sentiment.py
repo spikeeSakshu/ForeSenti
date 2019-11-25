@@ -76,7 +76,7 @@ def call_senti(symbol):
     X_tr_t = X_train.reshape(X_train.shape[0], 1, X_train.shape[1])
     X_tst_t = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
     
-    
+    print(X_tst_t)
     model= build_model(X_train)
     early_stop = EarlyStopping(monitor='loss', patience=5, verbose=1)
     
