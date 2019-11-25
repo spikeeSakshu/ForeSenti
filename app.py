@@ -21,10 +21,12 @@ def home():
 @app.route('/prediction')
 def prediction():
     symbol= "RELIANCE"
-    pred_hist_LSTM, y_test, y_pred_test_LSTM, X= call(symbol)
-    print(y_pred_test_LSTM)
+#    pred_hist_LSTM, y_test, y_pred_test_LSTM, X= call(symbol)
+#    print(y_pred_test_LSTM)
     
-#    pred_senti_LST= 
+    pred_senti_LSTM,y_test, y_pred_test_LSTM, X= call_senti(symbol)
+    print(pred_senti_LSTM)
+    
     my_plot_div = plot([Scatter(x=X, y=y_test, name='True Value'), Scatter(x=X, y=y_pred_test_LSTM, name= 'Predicted')], output_type='div')
     return render_template('prediction.html', title='Prediction', prediction=prediction, graph=Markup(my_plot_div))
 

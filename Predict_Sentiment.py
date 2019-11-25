@@ -4,7 +4,6 @@ Created on Mon Nov 25 16:56:01 2019
 
 @author: Sakshu
 """
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
@@ -20,19 +19,19 @@ from keras.layers import LSTM
 
 import import_ipynb
 from GetHistoricalData import find_data
-from SentimentData.GetTweets import tweets
+from SentimentData.GetSentimentData import senti_data
 
 
 def processing(data):
     # selecting Feature Columns
-    feature_columns=['Prev Close','Open', 'High', 'Low', 'Volume', 'Turnover']
+    feature_columns=['Prev Close','Open', 'High', 'Low', 'Volume', 'Turnover', 'Score']
     scaler = MinMaxScaler()
     feature_minmax_transform_data = scaler.fit_transform(data[feature_columns])
     feature_minmax_transform = pd.DataFrame(columns=feature_columns, data=feature_minmax_transform_data, index=data.index)
     return feature_minmax_transform
 
 def split_data(data, target):
-    ts_split= TimeSeriesSplit(n_splits=10)
+    ts_split= TimeSeriesSplit(n_splits=2)
     for train_index, test_index in ts_split.split(data):
         X_train, X_test = data[:len(train_index)], data[len(train_index): (len(train_index)+len(test_index))]
         y_train, y_test = target[:len(train_index)].values.ravel(), target[len(train_index): (len(train_index)+len(test_index))].values.ravel()
@@ -54,9 +53,10 @@ def build_model(X_train):
 def call_senti(symbol):
 #    symbol= 'RELIANCE'
     find_data(symbol, '2019-11-05')
-    df = pd.read_csv('SentimentData/Data/'+symbol+".csv",na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)
     
+    senti_data(symbol)
     
+    df = pd.read_csv('Data/'+symbol+"_merged_Data.csv",na_values=['null'],index_col='Date',parse_dates=True,infer_datetime_format=True)   
     columns=['Prev Close','Open', 'High', 'Low', 'Close', 'Volume', 'Turnover', 'Score']
     df_final= df[columns]
     test = df_final
@@ -83,5 +83,13 @@ def call_senti(symbol):
     history_model_lstm = model.fit(X_tr_t, y_train, validation_data=(X_tst_t,y_test), epochs=200, batch_size=8, verbose=1, shuffle=False, callbacks=[early_stop])
     
     y_pred_test_LSTM= model.predict(X_tst_t)
+    
+    col1 = pd.DataFrame(y_test, columns=['True'])
+
+    col2 = pd.DataFrame(y_pred_test_LSTM, columns=['LSTM_prediction'])
+    
+    col3 = pd.DataFrame(history_model_lstm.history['loss'], columns=['Loss_LSTM'])
+    results = pd.concat([col1, col2, col3], axis=1)
+    results.to_excel('PredictionResults_LSTM_NonShift.xlsx')
     
     return [y_pred_test_LSTM[-1], y_test, y_pred_test_LSTM, np.array(df['Date.1'][-len(y_test)+1:])]

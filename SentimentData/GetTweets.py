@@ -53,10 +53,11 @@ class TwitterData:
     def parse_config(self):
         config = {}
       # Get credential from JSON file
-        if os.path.exists('Data/twitter_credentials.json'):
-            with open('Data/twitter_credentials.json') as f:
+        if os.path.exists('SentimentData/twitter_credentials.json'):
+            print('YES')
+            with open('SentimentData/twitter_credentials.json') as f:
                 config.update(json.load(f))
-        
+#        print(config)
         return config
 
     def oauth_req(self, url, http_method="GET", post_body='',
@@ -94,16 +95,17 @@ class TwitterData:
                 d = datetime.datetime.strptime(item['created_at'], '%a %b %d %H:%M:%S +0000 %Y')
                 date= str(d).split()
                 
-                csvWriter.writerow([item['user']['screen_name'], item['text'].encode('utf-8'), "RELIANCE", date[0], date[1]])
+                csvWriter.writerow([item['user']['screen_name'], item['text'].encode('utf-8'), 'Company', date[0], date[1]])
                 
         return tweets
     
 def tweets(symbol):
     # Open/Create a file to append data
-    csvFile = open('Data/'+symbol+'Tweets.csv', 'a', newline='')
+    csvFile = open('Data/'+symbol+'_Tweets.csv', 'w', newline='')
     #Use csv Writer
     global csvWriter
     csvWriter= csv.writer(csvFile)
+    csvWriter.writerow(["Username", "Tweet",  'Company', "Date", 'Time'])
     
     if symbol=='RELIANCE':
         q='@RELIANCE OR @jio OR #Reliance OR #RELIANCE OR RELIANCE JIO OR Reliance Industries OR RCOM OR Reliance Industries OR RELCAPITAL'
