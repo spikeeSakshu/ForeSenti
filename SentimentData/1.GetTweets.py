@@ -98,7 +98,7 @@ class TwitterData:
                 
         return tweets
     
-def call(symbol):
+def call_sentiment(symbol):
     # Open/Create a file to append data
     csvFile = open('Data/'+symbol+'Tweets.csv', 'a', newline='')
     #Use csv Writer
