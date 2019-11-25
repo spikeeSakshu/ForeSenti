@@ -74,11 +74,11 @@ def call(symbol):
     X_tst_t = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
     
     
-    model= build_model(X_tr_t)
+    model= build_model(X_train)
     early_stop = EarlyStopping(monitor='loss', patience=5, verbose=1)
     
     history_model_lstm = model.fit(X_tr_t, y_train, validation_data=(X_tst_t,y_test), epochs=200, batch_size=8, verbose=1, shuffle=False, callbacks=[early_stop])
     
-    y_pred_test_LSTM= model_lstm.predict(X_tst_t)
+    y_pred_test_LSTM= model.predict(X_tst_t)
     
-    return [y_pred_test_LSTM[-1], y_test, y_pred_test_LSTM]
+    return [y_pred_test_LSTM[-1], y_test, y_pred_test_LSTM, np.array(df['Date.1'][-len(y_test)+1:])]
