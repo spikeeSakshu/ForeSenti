@@ -8,7 +8,7 @@ import numpy as np
 
 from markupsafe import Markup
 from Predict_HistoricData import call
-
+from Predict_Sentiment import call_senti
 
 app = Flask(__name__)
 
