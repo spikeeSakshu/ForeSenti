@@ -33,7 +33,7 @@ class TwitterData:
             newDate = self.currDate + dateDiff
             self.weekDates.append(newDate.strftime("%Y-%m-%d"))
         # end loop
-        print("New Week Dates =",self.weekDates)
+#        print("New Week Dates =",self.weekDates)
     # end
 
     # start getWeeksData
@@ -54,7 +54,6 @@ class TwitterData:
         config = {}
       # Get credential from JSON file
         if os.path.exists('SentimentData/twitter_credentials.json'):
-            print('YES')
             with open('SentimentData/twitter_credentials.json') as f:
                 config.update(json.load(f))
 #        print(config)
@@ -66,7 +65,7 @@ class TwitterData:
         consumer = oauth2.Consumer(key=config.get('CONSUMER_KEY'), secret=config.get('CONSUMER_SECRET'))
         token = oauth2.Token(key=config.get('ACCESS_KEY'), secret=config.get('ACCESS_SECRET'))
         client = oauth2.Client(consumer, token)
-        print('token accepted')
+#        print('token accepted')
         resp, content = client.request(url,method=http_method,body=bytes('', 'utf-8'),headers=http_headers)
 
         return content
@@ -114,7 +113,7 @@ def tweets(symbol):
     
     twitterData = TwitterData(str(date.today()))
     twitterData.getTwitterData(q)
-    print('Done')
+    print('Tweets Scrapped')
 
     
     

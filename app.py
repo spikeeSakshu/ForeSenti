@@ -24,19 +24,24 @@ def prediction():
     symbol = request.args.get('symbol', None)
       
     print(symbol)
-     
 
-#    symbol= "RELIANCE"
     
-    pred_hist_LSTM, y_test, y_pred_test_LSTM, X= call(symbol)
+    pred_, y_test, y_pred_test_LSTM, X= call(symbol)
+    
+    
+    
+    y_pred_test_LSTM= y_pred_test_LSTM.flatten()
     print(y_pred_test_LSTM)
+#    print('Y_test', y_test)
     
-#        pred_senti_LSTM,y_test, y_pred_test_LSTM, X= call_senti(symbol)
-#        print(pred_senti_LSTM)
-        
+    pred_senti= call_senti(symbol)
+    
+    pred= (pred_senti+pred_)/2
+    
     my_plot_div = plot([Scatter(x=X, y=y_test, name='True Value'), Scatter(x=X, y=y_pred_test_LSTM, name= 'Predicted')], output_type='div')
     
-    return render_template('prediction.html', title='Prediction', prediction=prediction, graph=Markup(my_plot_div))
+    return render_template('prediction.html', title='Prediction', prediction=[pred-10,pred+10], graph=Markup(my_plot_div))
+
       
 
 if __name__ == '__main__':

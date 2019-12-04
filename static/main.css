@@ -24,7 +24,7 @@ html {
 .loader {
     border: 16px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 16px solid #3498db;
+    border-top: 16px solid #9ad0dc;
     width: 120px;
     height: 120px;
     -webkit-animation: spin 2s linear infinite;
@@ -39,7 +39,7 @@ html {
 header{
 	text-align: center;
 	padding: 50px;
-	background-color: #1c77c3;
+	background-color: #9ad0dc;
 	margin: 0;
 }
 
@@ -85,6 +85,7 @@ h1{
 
 .contain {
     min-height: 100%;
+    padding: 100px;
     position: relative;
     font-family: 'Montserrat', sans-serif;
 }

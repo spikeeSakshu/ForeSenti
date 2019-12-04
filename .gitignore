@@ -2,3 +2,5 @@
 twitter_credentials.json
 Data
 SentimentData/twitter_credentials.json
+__pycache__
+SentimentData/__pycache__

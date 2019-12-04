@@ -113,3 +113,5 @@ def senti_data(symbol):
     merged_data= Merge_datasets(symbol, avg_senti)
     
     merged_data.to_csv('Data/'+symbol+'_merged_Data.csv', sep=',', encoding='utf-8')
+    
+    print('Merged')

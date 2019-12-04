@@ -5,17 +5,10 @@ Created on Mon Nov 25 16:56:01 2019
 @author: Sakshu
 """
 import pandas as pd
-import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import TimeSeriesSplit
-from sklearn.metrics import mean_squared_error, r2_score
 
-from keras.models import Sequential
-import keras.backend as K
-from keras.callbacks import EarlyStopping
-from keras.optimizers import Adam
-from keras.layers import Dense
-from keras.layers import LSTM
+from sklearn import linear_model,svm, preprocessing
 
 import import_ipynb
 from GetHistoricalData import find_data
@@ -38,16 +31,10 @@ def split_data(data, target):
         
     return [X_train, X_test, y_train, y_test]
 
-def build_model(X_train):
-    K.clear_session()
-
-    model_lstm = Sequential()
-    model_lstm.add(LSTM(16, input_shape=(1, X_train.shape[1]), activation='relu', return_sequences=False))
-    model_lstm.add(Dense(1))
-    
-    model_lstm.compile(loss='mean_squared_error', optimizer='adam')
-    
-    return model_lstm
+def build_model(X_train, y_train):
+    lm = svm.SVR(max_iter=20,C=0.1)
+    model_SVM= lm.fit(X_train, y_train)
+    return model_SVM
     
     
 def call_senti(symbol):
@@ -70,26 +57,10 @@ def call_senti(symbol):
     
     X_train, X_test, y_train, y_test= split_data(feature_minmax_transform, target)
     
-    X_train =np.array(X_train)
-    X_test =np.array(X_test)
     
-    X_tr_t = X_train.reshape(X_train.shape[0], 1, X_train.shape[1])
-    X_tst_t = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
+    model= build_model(X_train, y_train)
     
-    print(X_tst_t)
-    model= build_model(X_train)
-    early_stop = EarlyStopping(monitor='loss', patience=5, verbose=1)
+    y_pred= model.predict(X_test)
+ 
     
-    history_model_lstm = model.fit(X_tr_t, y_train, validation_data=(X_tst_t,y_test), epochs=200, batch_size=8, verbose=1, shuffle=False, callbacks=[early_stop])
-    
-    y_pred_test_LSTM= model.predict(X_tst_t)
-    
-    col1 = pd.DataFrame(y_test, columns=['True'])
-
-    col2 = pd.DataFrame(y_pred_test_LSTM, columns=['LSTM_prediction'])
-    
-    col3 = pd.DataFrame(history_model_lstm.history['loss'], columns=['Loss_LSTM'])
-    results = pd.concat([col1, col2, col3], axis=1)
-    results.to_excel('PredictionResults_LSTM_NonShift.xlsx')
-    
-    return [y_pred_test_LSTM[-1], y_test, y_pred_test_LSTM, np.array(df['Date.1'][-len(y_test)+1:])]
+    return y_pred[-1]
